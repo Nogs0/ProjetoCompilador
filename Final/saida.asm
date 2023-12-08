@@ -11,21 +11,34 @@
 	jal FUNC4
 	li $v0, 10
 	syscall
+
 FUNC4:
-	move $s5, $a2
-	move $s6, $a1
-	move $s7, $a0
+
+	sub $sp, $sp, 4
+	sw $a2, 0($sp)
+	lw $t2, 0($sp)
+
+	sub $sp, $sp, 4
+	sw $a1, 0($sp)
+	lw $t1, 0($sp)
+
+	sub $sp, $sp, 4
+	sw $a0, 0($sp)
+	lw $t0, 0($sp)
+
 	div $s5, $s6
-	mflo $t0
-	add $t1,$t0,$s7
+	mflo $t3
+	add $t4,$t3,$s7
 	li $v0, 1
-	move $a0,$t1
+	move $a0,$t4
 	syscall
 	li $v0,11
 	li $a0,'\n'
 	syscall
-	li $t2,10
+	li $t5,10
 	li $v0, 1
-	move $a0,$t2
+	move $a0,$t5
 	syscall
+
+	add $sp, $sp, 12
 jr $ra

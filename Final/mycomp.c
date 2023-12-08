@@ -1470,14 +1470,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 51 "mycomp.y"
-    { MoveMoreParameter(&(yyval.node), (yyvsp[(2) - (4)].place), &(yyvsp[(4) - (4)].node)); ;}
+    { MoveMoreParameter(&(yyval.node), &(yyvsp[(2) - (4)].place), &(yyvsp[(4) - (4)].node)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
 #line 52 "mycomp.y"
-    { MoveParameter(&(yyval.node), (yyvsp[(2) - (2)].place)); ;}
+    { MoveParameter(&(yyval.node), &(yyvsp[(2) - (2)].place)); ;}
     break;
 
   case 7:
@@ -1699,7 +1699,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 143 "mycomp.y"
-    {  create_cod(&(yyval.node).code); (yyval.node).place = (yyvsp[(1) - (1)].place); ;}
+    {  criaId(&(yyval.node), (yyvsp[(1) - (1)].place)); ;}
     break;
 
 

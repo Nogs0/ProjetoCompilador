@@ -48,8 +48,8 @@ Funcao:
    ;
 
 Ldeclps :
-	Tipo ID ',' Ldeclps { MoveMoreParameter(&$$, $2, &$4); }
-	| Tipo ID   { MoveParameter(&$$, $2); }
+	Tipo ID ',' Ldeclps { MoveMoreParameter(&$$, &$2, &$4); }
+	| Tipo ID   { MoveParameter(&$$, &$2); }
 	| {$$ = $$;}
 	;
      
@@ -140,7 +140,7 @@ Exp : Exp '+' Exp  { ExpAri("add",&$$,$1,$3); }
 	| Exp OR Exp   { ExpRel("or",&$$,$1,$3); }
 	| '(' Exp ')'  { $$ = $2; }
 	| NUM	  {  Li(&$$,$1); } 				 		   
-	| ID      {  create_cod(&$$.code); $$.place = $1; }     
+	| ID      {  criaId(&$$, $1); }     
 	;   
 	
 %%  

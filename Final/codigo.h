@@ -4,7 +4,8 @@
 char instrucao[30];
 int param = 0;
 int arg = 0;
-
+int tamPilha = 0;
+int isFuncao = 0;
 int temp = -1;
 int newTemp()
 {
@@ -36,7 +37,21 @@ void Atrib(struct no *Atrib, int $1, struct no $3)
 	insert_cod(&Atrib->code, $3.code);
 	insert_cod(&Atrib->code, instrucao);
 
-	temp++;
+	if (!isFuncao)
+		temp++;
+}
+
+void criaId(struct no *Exp, int Id)
+{
+	create_cod(&Exp->code);
+	if (!isFuncao)
+	{
+		Exp->place = Id;
+	}
+	else
+	{
+		Exp->place = temp;
+	}
 }
 
 void Li(struct no *Exp, int num)
@@ -258,16 +273,24 @@ void CallFunction(struct no *Func, int Id, struct no Args)
 	param = 0;
 }
 
-void MoveParameter(struct no *Ldeclps, int Id)
+void MoveParameter(struct no *Ldeclps, int *Id)
 {
 	create_cod(&Ldeclps->code);
-	char reg_param[5];
-	getName(Id, reg_param);
-	sprintf(instrucao, "\tmove %s, $a%d\n", reg_param, arg++);
+	tamPilha += 4;
+	sprintf(instrucao, "\n\tsub $sp, $sp, %d\n", 4); // 4 Bytes, tamanho de um inteiro
+	insert_cod(&Ldeclps->code, instrucao);
+
+	sprintf(instrucao, "\tsw $a%d, 0($sp)\n", arg++); // armazena parametros na pilha
+	insert_cod(&Ldeclps->code, instrucao);
+
+	char reg_temp[5];
+	*Id = newTemp();
+	getName(*Id, reg_temp);
+	sprintf(instrucao, "\tlw %s, 0($sp)\n", reg_temp); // carrega para os reg temporarios
 	insert_cod(&Ldeclps->code, instrucao);
 }
 
-void MoveMoreParameter(struct no *Ldeclps, int Id, struct no *Ldeclp)
+void MoveMoreParameter(struct no *Ldeclps, int *Id, struct no *Ldeclp)
 {
 	MoveParameter(Ldeclps, Id);
 	insert_cod(&Ldeclps->code, Ldeclp->code);
@@ -297,18 +320,26 @@ void Function(struct no *Func, int Id, struct no Ldeclps, struct no Statement_Se
 	create_cod(&Func->code);
 	if (Func->place == 0) // ignora o main
 	{
+		isFuncao = 0;
 		insert_cod(&Func->code, Statement_Seq.code);
 		sprintf(instrucao, "\tli $v0, 10\n\tsyscall\n");
 		insert_cod(&Func->code, instrucao);
 	}
 	else
 	{
-		sprintf(instrucao, "FUNC%d:\n", Id);
+		sprintf(instrucao, "\nFUNC%d:\n", Id);
 		insert_cod(&Func->code, instrucao);
 		insert_cod(&Func->code, Ldeclps.code);
+
+		insert_cod(&Func->code, "\n");
 		insert_cod(&Func->code, Statement_Seq.code);
+
+		sprintf(instrucao, "\n\tadd $sp, $sp, %d\n", tamPilha);
+		insert_cod(&Func->code, instrucao);
 		sprintf(instrucao, "jr $ra\n");
 		insert_cod(&Func->code, instrucao);
+
+		tamPilha = 0;
 		arg = 0;
 	}
 }
