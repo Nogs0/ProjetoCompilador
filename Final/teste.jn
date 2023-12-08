@@ -1,13 +1,14 @@
         int main()
         {
             int a, b, c;
-            a = read();
-            b = read();
-            c = read();
+            a = 1;
+            b = 1;
+            c = 3;
             soma(a, b, c);
         }
 
         void soma(int d, int e, int f)
         {
-            println(d + e + f);
+            println(d / e + f); // 4
+            print(10);
         }

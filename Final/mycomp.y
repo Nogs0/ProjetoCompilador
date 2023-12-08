@@ -129,7 +129,7 @@ Do_While_Statement:
 Exp : Exp '+' Exp  { ExpAri("add",&$$,$1,$3); }
 	| Exp '-' Exp  { ExpAri("sub",&$$,$1,$3); }
 	| Exp '*' Exp  { ExpAri("mul",&$$,$1,$3); }
-	| Exp '/' Exp  { Div(&$$,$1,$3); }
+	| Exp '/' Exp  { ExpAri("div",&$$,$1,$3); }
 	| Exp '>' Exp  { ExpRel("bgt",&$$,$1,$3); } 
 	| Exp '<' Exp  { ExpRel("blt",&$$,$1,$3); }
 	| Exp GE Exp   { ExpRel("bge",&$$,$1,$3); }

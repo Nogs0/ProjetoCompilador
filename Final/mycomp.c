@@ -1622,7 +1622,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 132 "mycomp.y"
-    { Div(&(yyval.node),(yyvsp[(1) - (3)].node),(yyvsp[(3) - (3)].node)); ;}
+    { ExpAri("div",&(yyval.node),(yyvsp[(1) - (3)].node),(yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 42:

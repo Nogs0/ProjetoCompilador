@@ -62,30 +62,20 @@ void ExpAri(char *operacao, struct no *Exp, struct no Exp1, struct no Exp2)
 	getName(Exp1.place, name_reg1);
 	getName(Exp2.place, name_reg2);
 	getName(Exp->place, name_temp);
-	sprintf(instrucao, "\t%s %s,%s,%s\n", operacao, name_temp,
-			name_reg1, name_reg2);
-	insert_cod(&Exp->code, instrucao);
-}
 
-void Div(struct no *Exp, struct no Exp1, struct no Exp2)
-{
-	char name_reg1[5];
-	char name_reg2[5];
-	char name_quociente[5];
-	Exp->place = newTemp();
-
-	create_cod(&Exp->code);
-	insert_cod(&Exp->code, Exp1.code);
-	insert_cod(&Exp->code, Exp2.code);
-
-	getName(Exp1.place, name_reg1);
-	getName(Exp2.place, name_reg2);
-	getName(Exp->place, name_quociente);
-
-	sprintf(instrucao, "\tdiv %s, %s\n", name_reg1, name_reg2);
-	insert_cod(&Exp->code, instrucao);
-	sprintf(instrucao, "\tmflo %s\n", name_quociente);
-	insert_cod(&Exp->code, instrucao);
+	if (strcmp(operacao, "div") == 0)
+	{
+		sprintf(instrucao, "\tdiv %s, %s\n", name_reg1, name_reg2);
+		insert_cod(&Exp->code, instrucao);
+		sprintf(instrucao, "\tmflo %s\n", name_temp);
+		insert_cod(&Exp->code, instrucao);
+	}
+	else
+	{
+		sprintf(instrucao, "\t%s %s,%s,%s\n", operacao, name_temp,
+				name_reg1, name_reg2);
+		insert_cod(&Exp->code, instrucao);
+	}
 }
 
 void ExpRel(char *branch, struct no *Exp, struct no Exp1, struct no Exp2)
@@ -131,29 +121,18 @@ void Print(struct no *Print, struct no Exp)
 	insert_cod(&Print->code, instrucao);
 }
 
-void Println(struct no *Print, struct no Exp)
+void Println(struct no *Print_cmd, struct no Exp)
 {
-	char name_reg[10];
-	create_cod(&Print->code);
-	getName(Exp.place, name_reg);
-	insert_cod(&Print->code, Exp.code);
-	sprintf(instrucao, "\tli $v0, 1\n");
-	insert_cod(&Print->code, instrucao);
-
-	sprintf(instrucao, "\tmove $a0,%s\n", name_reg);
-	insert_cod(&Print->code, instrucao);
-
-	sprintf(instrucao, "\tsyscall\n");
-	insert_cod(&Print->code, instrucao);
+	Print(Print_cmd, Exp);
 
 	sprintf(instrucao, "\tli $v0,11\n");
-	insert_cod(&Print->code, instrucao);
+	insert_cod(&Print_cmd->code, instrucao);
 
 	sprintf(instrucao, "\tli $a0,'\\n'\n");
-	insert_cod(&Print->code, instrucao);
+	insert_cod(&Print_cmd->code, instrucao);
 
 	sprintf(instrucao, "\tsyscall\n");
-	insert_cod(&Print->code, instrucao);
+	insert_cod(&Print_cmd->code, instrucao);
 }
 
 void Read(struct no *Read_cmd, int reg)
@@ -281,35 +260,26 @@ void CallFunction(struct no *Func, int Id, struct no Args)
 
 void MoveParameter(struct no *Ldeclps, int Id)
 {
+	create_cod(&Ldeclps->code);
 	char reg_param[5];
 	getName(Id, reg_param);
-	create_cod(&Ldeclps->code);
-
 	sprintf(instrucao, "\tmove %s, $a%d\n", reg_param, arg++);
 	insert_cod(&Ldeclps->code, instrucao);
 }
 
 void MoveMoreParameter(struct no *Ldeclps, int Id, struct no *Ldeclp)
 {
-	char reg_param[5];
-
-	create_cod(&Ldeclps->code);
-
-	getName(Id, reg_param);
-	sprintf(instrucao, "\tmove %s, $a%d\n", reg_param, arg++);
-	insert_cod(&Ldeclp->code, instrucao);
-
+	MoveParameter(Ldeclps, Id);
 	insert_cod(&Ldeclps->code, Ldeclp->code);
 }
 
 void SetParameter(struct no *Args, struct no Exp)
 {
+	create_cod(&Args->code);
 	char reg_arg[5];
 	getName(Exp.place, reg_arg);
 
-	create_cod(&Args->code);
-
-	if (Exp.place < 0)
+	if (Exp.place < 0) // verifica se o valor foi passado de forma explicita
 		insert_cod(&Args->code, Exp.code);
 
 	sprintf(instrucao, "\tmove $a%d, %s\n", param++, reg_arg);
@@ -318,14 +288,7 @@ void SetParameter(struct no *Args, struct no Exp)
 
 void SetMoreParameter(struct no *Args, struct no Exp, struct no *Arg)
 {
-	char reg_arg[5];
-	getName(Exp.place, reg_arg);
-	if (Exp.place < 0)
-		insert_cod(&Arg->code, Exp.code);
-
-	sprintf(instrucao, "\tmove $a%d, %s\n", param++, reg_arg);
-	insert_cod(&Arg->code, instrucao);
-
+	SetParameter(Args, Exp);
 	insert_cod(&Args->code, Arg->code);
 }
 
