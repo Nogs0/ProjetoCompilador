@@ -1,13 +1,13 @@
-int main()
-{
-    int a;
-    a = 4;
-    soma10ePrinta(a);
-    println(a);
-}
+        int main()
+        {
+            int a, b, c;
+            a = read();
+            b = read();
+            c = read();
+            soma(a, b, c);
+        }
 
-void soma10ePrinta(int a)
-{
-    a = a + 10;
-    println(a);
-}
+        void soma(int d, int e, int f)
+        {
+            println(d + e + f);
+        }
