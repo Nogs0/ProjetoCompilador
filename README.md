@@ -14,18 +14,15 @@ Exemplo de código aceito:
         int main()
         {
             int a, b, c;
-            a = 4;
-            b = 8;
-            c = 10;
-            soma(b, c);
-            soma(14, 10);
-            println(a);
+            a = read();
+            b = read();
+            c = read();
+            soma(a, b, c);
         }
 
-        void soma(int d, int e)
+        void soma(int d, int e, int f)
         {
-            d = d + e;
-            println(d);
+            println(d + e + f);
         }
 ```
 Saída: 
